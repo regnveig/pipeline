@@ -1,0 +1,7 @@
+[submodule "juicer"]
+	path = juicer
+	url = https://github.com/aidenlab/juicer
+
+[submodule "C-TALE-Normalization"]
+	path = C-TALE-Normalization
+	url = https://github.com/ArtemLuzhin/C-TALE-Normalization
