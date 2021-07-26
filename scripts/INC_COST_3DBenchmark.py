@@ -261,21 +261,26 @@ def BenchmarkPipeline(Name, TopDir, Accessions, Enzyme, RestrictionSiteLocations
 
 # --------------------------
 
-#BenchmarkPipeline(
-	#Name = "PP_TEST",
-	#TopDir = "/Data/NGS_Data/20210714_INC_COST_3DBenchmark/Project/PP_TEST",
-	#Accessions = ["/Data/NGS_Data/20210714_INC_COST_3DBenchmark/Source/SRR5453505.sra"],
-	#Enzyme = "DpnII",
-	#RestrictionSiteLocations = "/Data/UserData/FairWind/Ya.Cloud/core/pipeline/data/restriction_sites/RestrictionSites_DpnII_mm10.txt",
-	#GenomeAssembly = "mm10",
-	#GenomeFA = "/Data/DataBases/mm10/mm10_canonic.fa",
-	#GenomeChromSizes = "/Data/DataBases/mm10/mm10_canonic.chrom.sizes",
-	#Capture = ["chr11", 32190000, 32335000],
-	#Resolution = 5000,
-	#Threads = 12)
-
-def Main(RearrangementsPath):
-	Data = pandas.read_csv(RearrangementsPath, sep='\t')
-	print(Data)
-
-Main("/Data/NGS_Data/20210714_INC_COST_3DBenchmark/Project/Rearrangements.tsv")
+Data = pandas.read_csv("/Data/NGS_Data/20210714_INC_COST_3DBenchmark/Project/Blocks.tsv", sep='\t', comment='#')
+for index, line in Data.iterrows():
+	Name = line["Accession"].replace(";", "-")
+	TopDir = f"/Data/NGS_Data/20210714_INC_COST_3DBenchmark/Project/{Name}"
+	Accessions = [f"/Data/NGS_Data/20210714_INC_COST_3DBenchmark/Source/{item}.sra" for item in line["Accession"].split(';')]
+	GenomeFA = f"/Data/DataBases/{line['Genome']}/{line['Genome']}_canonic.fa"
+	GenomeChromSizes = f"/Data/DataBases/{line['Genome']}/{line['Genome']}_canonic.chrom.sizes"
+	RestrictionSiteLocations = f"/Data/UserData/FairWind/Ya.Cloud/core/pipeline/data/restriction_sites/RestrictionSites_{line['Enzyme']}_{line['Genome']}.txt"
+	Capture = [line["Chrom"], line["Start"], line["End"]]
+	Resolution = 5000
+	Threads = 12
+	BenchmarkPipeline(
+		Name = Name,
+		TopDir = TopDir,
+		Accessions = Accessions,
+		Enzyme = line['Enzyme'],
+		RestrictionSiteLocations = RestrictionSiteLocations,
+		GenomeAssembly = line['Genome'],
+		GenomeFA = GenomeFA,
+		GenomeChromSizes = GenomeChromSizes,
+		Capture = Capture,
+		Resolution = Resolution,
+		Threads = Threads)
